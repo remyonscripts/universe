@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>A Galaxy Made of You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<video class="global-bg-video" autoplay muted loop playsinline id="global-bg-video">
+  <source src="assets/video/space-loop.webm" type="video/webm">
+</video>
+<div class="global-bg-fallback"></div>
+
+<!-- progress bar -->
+<nav id="constellation-map" aria-label="Your journey through the galaxy">
+  <svg id="constellation-svg" viewBox="0 0 200 200">
+    <g id="const-lines"></g>
+    <g id="const-nodes"></g>
+  </svg>
+</nav>
+
+<button id="mute-toggle" aria-label="Mute music" title="Mute music">
+  <span class="icon-sound">🔊</span>
+  <span class="icon-muted">🔇</span>
+</button>
+
+<button id="home-btn" data-target="home" aria-label="Back to homepage" title="Back to homepage">&larr; HOME</button>
+
+<!-- keypad -->
+<section id="screen-lock" class="screen active">
+  <div class="screen-tint tint--night"></div>
+  <div class="overlay overlay--dark"></div>
+
+  <div class="lock-content">
+    <p class="eyebrow">every universe has its turning point</p>
+
+    <div class="lock-hearts" id="lock-hearts">
+      <span class="lock-heart">💖</span>
+      <span class="lock-heart">💖</span>
+      <span class="lock-heart">💖</span>
+    </div>
+
+    <div class="pin-display" id="pin-display">
+      <div class="pin-box" data-slot="0"></div>
+      <div class="pin-box" data-slot="1"></div>
+      <div class="pin-box" data-slot="2"></div>
+      <div class="pin-box" data-slot="3"></div>
+    </div>
+
+    <div class="keypad" id="keypad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key key--wide" data-key="clear">CLR</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key key--wide key--enter" data-key="enter">OK</button>
+    </div>
+
+    <p class="lock-hint" id="lock-hint">align the constellation</p>
+  </div>
+</section>
+
+<!-- transition -->
+<section id="screen-supernova" class="screen">
+  <video class="bg-video bg-video--cover" muted playsinline id="video-supernova">
+    <source src="assets/video/supernova-transition.webm" type="video/webm">
+  </video>
+  <div class="supernova-flash" id="supernova-flash"></div>
+</section>
+
+<!-- main screen -->
+<section id="screen-home" class="screen">
+  <div class="screen-tint tint--home"></div>
+  <div class="overlay overlay--dark"></div>
+
+  <div class="home-content">
+    <header class="home-header reveal-up">
+      <h1 class="display-heading">Happy Girlfriend&rsquo;s Day, Baby!!</h1>
+      <p class="home-sub">I love you to infinity and beyond</p>
+    </header>
+
+    <p class="home-intro reveal-up">
+      We may be separated by screens, cities, and late-night calls, but somehow
+      you still became the softest part of my universe.
+    </p>
+    <p class="home-intro reveal-up">
+      It makes me sad kasi I can&rsquo;t be there to celebrate this day with you :(
+    </p>
+    <p class="home-intro reveal-up">
+      I don&rsquo;t have grand gifts to give you :c kaya ginamit ko nalang creativity ko
+      to make this little galaxy for you. Sana magustuhan mo, and I hope it makes you smile kahit papano
+    </p>
+    <p class="home-intro reveal-up">
+      I love you so much, baby. Happy Girlfriend&rsquo;s Day!
+    </p>
+
+    <div class="planet-field" id="planet-field">
+      <svg class="constellation-lines" id="home-constellation-lines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+
+      <button class="planet planet--mercury" data-target="mercury" data-planet="mercury">
+        <span class="planet-orb"></span>
+        <span class="planet-label">Mercury</span>
+      </button>
+
+      <button class="planet planet--neptune" data-target="neptune" data-planet="neptune">
+        <span class="planet-orb"></span>
+        <span class="planet-label">Neptune</span>
+      </button>
+
+      <button class="planet planet--venus" data-target="venus" data-planet="venus">
+        <span class="planet-orb"></span>
+        <span class="planet-label">Venus</span>
+      </button>
+    </div>
+
+    <!-- singularity -->
+    <section id="blackhole-section" class="blackhole-section">
+      <div class="screen-tint tint--blackhole tint--scoped"></div>
+      <div class="overlay overlay--darker overlay--scoped"></div>
+      <button id="blackhole-trigger" class="blackhole-btn">
+        <span class="blackhole-orb"></span>
+        <span class="blackhole-text">where every universe leads</span>
+      </button>
+    </section>
+  </div>
+</section>
+
+<!-- mercury -->
+<section id="screen-mercury" class="screen planet-screen">
+  <div class="screen-tint tint--mercury"></div>
+  <div class="overlay overlay--dark"></div>
+
+
+  <div class="planet-content">
+    <h2 class="display-heading">Letters For Every Version Of You</h2>
+    <p class="letters-progress" id="mercury-progress">0 / 64 letters read</p>
+
+    <div class="shelf" id="mercury-shelf"></div>
+
+    <div class="mercury-playlist">
+      <p class="mercury-playlist-label">🎧 our playlist</p>
+      
+      <div class="custom-spotify-player">
+        <div class="sp-now-playing">
+          <div class="sp-track-info">
+            <h4 id="sp-title">Select a song...</h4>
+            <p id="sp-artist">Unknown Artist</p>
+          </div>
+          <div class="sp-controls">
+            <button id="sp-prev">⏮</button>
+            <button id="sp-play-pause">▶️</button>
+            <button id="sp-next">⏭</button>
+          </div>
+        </div>
+
+        <div class="sp-track-list" id="sp-track-list">
+        </div>
+        
+        <audio id="sp-audio-player"></audio>
+      </div>
+      
+    </div>
+</section>
+
+<!-- stars -->
+<section id="screen-neptune" class="screen planet-screen">
+  <div class="screen-tint tint--neptune"></div>
+  <div class="overlay overlay--dark"></div>
+
+
+  <div class="planet-content planet-content--full">
+    <h2 class="display-heading">100 Reasons Why I Love You</h2>
+    <p class="letters-progress" id="star-counter">Stars Found: 0 / 100</p>
+    <div class="starfield" id="starfield"><!-- stars injected by JS --></div>
+  </div>
+</section>
+
+<!-- venus -->
+<section id="screen-venus" class="screen planet-screen">
+  <div class="screen-tint tint--venus"></div>
+  <div class="overlay overlay--dark"></div>
+
+
+  <div class="planet-content venus-content">
+    <div class="venus-layout-grid" id="venus-layout-grid">
+      
+      <div class="bouquet-wrap" id="bouquet-wrap">
+        <img src="assets/images/bouquet.png" alt="A bouquet of flowers" class="bouquet-img" id="bouquet-img" onerror="this.style.display='none'; document.getElementById('bouquet-fallback').style.display='flex';">
+        <div class="bouquet-fallback" id="bouquet-fallback">💐</div>
+        <p class="tap-hint" id="tap-hint">tap me</p>
+      </div>
+
+      <div class="venus-art-wrap" id="venus-art-wrap">
+        <div class="art-frame">
+          <img src="assets/images/commission.png" alt="Us" class="venus-art-img">
+          
+          <div class="art-overlay"></div>
+          
+          <div class="venus-lyrics-wrap" id="venus-lyrics-wrap">
+            <p class="venus-lyric-line" id="venus-lyric-line"></p>
+          </div>
+        </div>
+      </div>
+      
+      <audio id="venus-lyric-audio" src="assets/audio/venus-song.mp3"></audio>
+      
+    </div>
+  </div>
+</section>
+
+<!--singularity -->
+<section id="screen-final" class="screen">
+  <div class="screen-tint tint--blackhole"></div>
+  <div class="overlay overlay--darkest"></div>
+
+
+  <div class="final-fade-in" id="final-fade-in"></div>
+
+  <div class="final-letter-wrap">
+    <div class="final-paper" id="final-paper">
+      <div id="final-letter-lines"><!-- lines revealed one by one by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<!-- Letter reading modal (Mercury) -->
+<div class="modal" id="letter-modal">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card letter-card" role="dialog" aria-modal="true">
+    <button class="modal-close" data-close-modal>&times;</button>
+    <p class="letter-category" id="letter-modal-category"></p>
+    <div class="letter-paper">
+      <p class="letter-text" id="letter-modal-text"></p>
+      <div class="letter-blank" id="letter-modal-blank">
+        <span class="blank-icon">✎</span>
+        <p class="blank-note">this letter is still waiting to be written</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Star reason modal (Neptune) -->
+<div class="modal" id="star-modal">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card star-card" role="dialog" aria-modal="true">
+    <button class="modal-close" data-close-modal>&times;</button>
+    <p class="star-modal-number" id="star-modal-number"></p>
+    <p class="star-modal-text" id="star-modal-text"></p>
+  </div>
+</div>
+
+<!-- Secret unlock toast -->
+<div class="toast" id="secret-toast">
+  <p class="toast-title">&#9993;&#65039; Unknown Signal Detected</p>
+  <p class="toast-body">A new envelope has appeared somewhere in Mercury.</p>
+</div>
+
+<!-- BABY easter egg modal -->
+<div class="modal" id="baby-modal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-card baby-card" role="dialog" aria-modal="true">
+    <p class="baby-text">rawr i love you so freaking much babyy, will you be my baby forever?</p>
+    <div class="baby-buttons">
+      <button class="baby-btn" id="baby-yes-1">YES</button>
+      <button class="baby-btn baby-btn--alt" id="baby-yes-2">YES OF COURSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Heart rain container -->
+<div class="heart-rain" id="heart-rain"></div>
+
+<!-- ============================================================
+     AUDIO ELEMENTS
+     ============================================================ -->
+<audio id="audio-lock" loop preload="none" src="assets/audio/lock-theme.mp3"></audio>
+<audio id="audio-homepage" loop preload="none" src="assets/audio/homepage-theme.mp3"></audio>
+<audio id="audio-mercury" loop preload="none" src="assets/audio/mercury-theme.mp3"></audio>
+<audio id="audio-neptune" loop preload="none" src="assets/audio/neptune-theme.mp3"></audio>
+<audio id="audio-venus" loop preload="none" src="assets/audio/venus-theme.mp3"></audio>
+<audio id="audio-singularity" loop preload="none" src="assets/audio/singularity-theme.mp3"></audio>
+
+<audio id="sfx-wrong" preload="none" src="assets/audio/engk-engot.mp3"></audio>
+<audio id="sfx-unlock" preload="none" src="assets/audio/unlock-chime.mp3"></audio>
+<audio id="sfx-mwah" preload="none" src="assets/audio/mwah.mp3"></audio>
+
+<script src="js/data.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
