@@ -64,8 +64,12 @@ function showScreen(name, opts={}){
     pauseVenusVideo();
   }
 
-  if(!opts.skipAudio && name !== "venus"){
-    AudioManager.playTrack(SCREEN_TRACK[name] || null);
+  if(!opts.skipAudio){
+    if (name !== "venus") {
+      AudioManager.playTrack(SCREEN_TRACK[name] || null);
+    } else {
+      AudioManager.playTrack(null);
+    }
   }
 
   const customAudioPlayer = document.getElementById("sp-audio-player");
@@ -1077,3 +1081,20 @@ venusObserver.observe(document.getElementById("screen-venus"), { attributes:true
 
   audio.addEventListener("ended", () => playTrack(currentIndex + 1));
 })();
+
+function playTrack(key){
+    if(key === current) return;
+    const next = key ? (TRACKS[key] || null) : null;
+    const prev = current ? TRACKS[current] : null;
+    current = key;
+
+    if(prev){
+      fade(prev, prev.volume || TARGET_VOLUME, 0, ()=>{
+        prev.pause(); // Tingnan mo, walang reset to zero dito!
+      });
+    }
+    if(next){
+      safePlay(next); // Wala ring reset to zero dito!
+      fade(next, 0, TARGET_VOLUME, null);
+    }
+  }
