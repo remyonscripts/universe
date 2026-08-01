@@ -1,9 +1,4 @@
-/* ==========================================================================
-   MAIN.JS
-   Wires together data.js + audio.js into the full interactive experience.
-   ========================================================================== */
 
-/* ---- State (persisted to localStorage) ----------------------------------- */
 const STORAGE_KEY = "galaxyMadeOfYou_state";
 
 function defaultState(){
@@ -180,14 +175,9 @@ function showScreen(name, opts={}){
     }
   });
 
-  // If she already unlocked it in a previous visit, skip straight to homepage.
-  if(state.unlocked){
-    showScreen("home");
-    AudioManager.playTrack("homepage");
-  } else {
-    showScreen("lock", { skipAudio:true });
-    AudioManager.playTrack("lock");
-  }
+ // Laging hihingin ang password every time i-open ang website
+  showScreen("lock", { skipAudio:true });
+  AudioManager.playTrack("lock");
 })();
 
 /* transition*/
@@ -495,6 +485,15 @@ function openStar(star, btn){
     btn.classList.add("found");
     updateStarCounter();
     checkSecretUnlocks();
+
+    const foundCount = Object.keys(state.starsFound).filter(id=> state.starsFound[id]).length;
+    if(foundCount >= 100){
+      setTimeout(() => {
+        state.starsFound = {};
+        saveState();
+        renderStarfield();
+      }, 1500);
+    }
   }
 }
 
