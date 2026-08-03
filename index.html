@@ -254,6 +254,24 @@
   </div>
 </div>
 
+  <!-- Sticky Note Diary Modal -->
+<div class="modal" id="diary-modal">
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-card diary-card" role="dialog" aria-modal="true">
+    <button class="modal-close" data-close-modal>&times;</button>
+    <p class="letter-category" id="diary-modal-category"></p>
+
+    <div class="diary-input-area">
+      <p class="diary-prompt">Write me a letter, vent out, or tell me about your day...</p>
+      <textarea id="diary-textarea" placeholder="Dear RJ..." rows="3"></textarea>
+      <button id="diary-save-btn" class="ghost-btn" onclick="addDiaryNote()">Drop Note 📌</button>
+    </div>
+
+    <div class="diary-board" id="diary-board">
+    </div>
+  </div>
+</div>
+
 <!-- Star reason modal (Neptune) -->
 <div class="modal" id="star-modal">
   <div class="modal-backdrop" data-close-modal></div>
