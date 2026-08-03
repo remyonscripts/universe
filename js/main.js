@@ -332,7 +332,7 @@ function renderSecretLetters(){
   if(!grid) return;
   grid.innerHTML = "";
   SECRET_LETTERS.forEach(sl=>{
-    const unlocked = state.secretUnlocked[sl.unlockKey];
+    const unlocked = sl.isDiary || state.secretUnlocked[sl.unlockKey];
     const env = document.createElement("button");
     env.className = "envelope secret-envelope" + (unlocked ? " unlocked" : "");
     env.title = unlocked ? sl.title : "????";
