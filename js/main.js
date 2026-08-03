@@ -7,12 +7,13 @@ function defaultState(){
     lettersRead:{},
     starsFound:{},
     hiddenStarFound:false,
-    secretUnlocked:{ stars100:false, time1111:false, allLetters:false, everything:false },
+    secretUnlocked:{ stars100:false, time1111:false, allLetters:false, everything:false, diary:true},
     planetsVisited:{ mercury:false, neptune:false, venus:false },
     bouquetOpened:false,
     venusSongPlayed:false,
     babyActivated:false,
     blackholeEntered:false
+    diaryEntries: []
   };
 }
 
@@ -377,16 +378,18 @@ function openLetter(letter){
 }
 
 function openSecretLetter(sl){
-  document.getElementById("letter-modal-category").textContent = `🔒 ${sl.title}`;
-  renderLetterBody(sl.text);
-  openModal("letter-modal");
+  if(sl.isDiary) {
+    document.getElementById("diary-modal-category").textContent = `💌 ${sl.title}`;
+    renderDiaryBoard();
+    openModal("diary-modal");
+  } else {
+    document.getElementById("letter-modal-category").textContent = `🔒 ${sl.title}`;
+    renderLetterBody(sl.text);
+    openModal("letter-modal");
+  }
 }
 
-/* ==========================================================================
-   NEPTUNE — 100 stars
-   ========================================================================== */
-// Persisted shuffle so which of the 100 reasons shows up at a given star
-// position is random, but stays consistent across visits/reloads.
+// Neptune
 function getStarOrder(){
   if(!state.starOrder || state.starOrder.length !== STARS.length){
     const order = STARS.map((_, i)=> i);
@@ -400,9 +403,6 @@ function getStarOrder(){
   return state.starOrder;
 }
 
-// Evenly spread positions using a shuffled grid (10x10 for 100 stars) with a
-// small random jitter inside each cell — looks scattered but never overlaps,
-// unlike pure random x/y which tends to clump stars on top of each other.
 function shuffledIndices(n){
   const arr = Array.from({length:n}, (_, i)=> i);
   for(let i = arr.length - 1; i > 0; i--){
@@ -422,7 +422,7 @@ function renderStarfield(){
   const cellOrder = shuffledIndices(GRID_COLS * GRID_ROWS);
 
   STARS.forEach((_, position)=>{
-    const star = STARS[order[position]]; // randomized reason for this position
+    const star = STARS[order[position]];
     const size = 9 + Math.random()*14;
 
     const cell = cellOrder[position];
@@ -448,7 +448,7 @@ function renderStarfield(){
     btn.style.setProperty("--base-opacity", (0.55 + Math.random()*0.45).toFixed(2));
     btn.style.setProperty("--twinkle-dur", `${(2 + Math.random()*2.5).toFixed(2)}s`);
     btn.style.setProperty("--drift-dur", `${(4 + Math.random()*4).toFixed(2)}s`);
-    // Small drift range so stars gently move without wandering into a neighbor's cell.
+   
     btn.style.setProperty("--dx", `${(Math.random()*4 - 2).toFixed(1)}px`);
     btn.style.setProperty("--dy", `${(Math.random()*4 - 2).toFixed(1)}px`);
     btn.innerHTML = `<img src="assets/images/${star.img}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="star-fallback" style="display:none;">⭐</span>`;
@@ -456,7 +456,6 @@ function renderStarfield(){
     field.appendChild(btn);
   });
 
-  // Hidden special star — fixed placement, distinct styling.
   const special = document.createElement("button");
   special.className = "star-point special" + (state.hiddenStarFound ? " found" : "");
   special.style.width = "22px";
@@ -513,9 +512,7 @@ function openHiddenStar(btn){
   }
 }
 
-/* ==========================================================================
-   VENUS — bouquet, art, and synced lyrics
-   ========================================================================== */
+// VENUS
 function initVenus(){
   const wrap = document.getElementById("bouquet-wrap");
   const artWrap = document.getElementById("venus-art-wrap");
@@ -524,7 +521,6 @@ function initVenus(){
   const audio = document.getElementById("venus-lyric-audio");
   const lyricEl = document.getElementById("venus-lyric-line");
 
-  // Reset visual state each time we enter
   wrap.classList.remove("opened");
   if(artWrap) artWrap.classList.remove("visible");
   if(lyricsWrap) lyricsWrap.classList.remove("visible");
@@ -532,8 +528,6 @@ function initVenus(){
   if(audio){ audio.pause(); audio.currentTime = 0; }
   if(lyricEl) lyricEl.textContent = "";
 
-  // 🎶 ADD YOUR LYRICS AND TIMESTAMPS HERE
-  // The 'time' is in seconds (e.g., 1 minute and 15 seconds = 75.0)
   const LYRICS = [
     { time: 0, text: "" },
     { time: 0.16, text: "You're the moon that glows in the sky" },
@@ -592,7 +586,6 @@ function initVenus(){
     { time: 223.17, text: "..." }
   ];
 
-  // Function to sync lyrics with the audio time
   const syncLyrics = () => {
     if (!audio || audio.paused) return;
     const currentTime = audio.currentTime;
@@ -602,11 +595,10 @@ function initVenus(){
       if (currentTime >= LYRICS[i].time) {
         currentLine = LYRICS[i].text;
       } else {
-        break; // Stop searching once we pass the current time
+        break;
       }
     }
     
-    // If the lyric line changed, fade out and swap the text
     if (lyricEl.textContent !== currentLine) {
       lyricEl.style.opacity = 0; 
       setTimeout(() => {
@@ -615,7 +607,7 @@ function initVenus(){
       }, 300);
     }
     
-    requestAnimationFrame(syncLyrics); // Keep checking the time continuously
+    requestAnimationFrame(syncLyrics); 
   };
 
   const handler = ()=>{
@@ -647,20 +639,16 @@ function initVenus(){
     wrap.removeEventListener("click", handler);
   };
   
-  // Make sure we don't duplicate clicks
   wrap.removeEventListener("click", handler);
   wrap.addEventListener("click", handler);
 }
 
-// Make sure the audio stops when navigating away
 function pauseVenusVideo(){
   const audio = document.getElementById("venus-lyric-audio");
   if(audio && !audio.paused){ audio.pause(); }
 }
 
-/* ==========================================================================
-   BLACK HOLE → FINAL LOVE LETTER
-   ========================================================================== */
+// SINGULARITY
 function enterBlackHole(){
   state.blackholeEntered = true;
   saveState();
@@ -669,7 +657,7 @@ function enterBlackHole(){
   const fadeLayer = document.getElementById("final-fade-in");
   showScreen("final", { skipAudio:true });
   fadeLayer.classList.remove("faded");
-  // Force reflow so the transition re-triggers each time.
+ 
   void fadeLayer.offsetWidth;
   requestAnimationFrame(()=>{
     fadeLayer.classList.add("faded");
@@ -698,7 +686,6 @@ function startFinalLetter(){
     container.appendChild(p);
     requestAnimationFrame(()=> p.classList.add("shown"));
 
-    // Gentle automatic scroll toward the newest line; manual scroll still works.
     screen.scrollTo({ top: screen.scrollHeight, behavior:"smooth" });
 
     i++;
@@ -707,9 +694,7 @@ function startFinalLetter(){
   setTimeout(revealNext, 800);
 }
 
-/* ==========================================================================
-   BABY EASTER EGG — type "BABY" anywhere
-   ========================================================================== */
+// easter egg
 (function initBabyEasterEgg(){
   let buffer = "";
   window.addEventListener("keydown", (e)=>{
@@ -760,9 +745,7 @@ function triggerHeartRain(){
   setTimeout(()=>{ rain.classList.remove("active"); rain.innerHTML = ""; }, 4200);
 }
 
-/* ==========================================================================
-   SECRET LETTER UNLOCK CHECKS + TOAST
-   ========================================================================== */
+// secret letter unlock toast
 function checkSecretUnlocks(){
   let changed = false;
 
@@ -811,9 +794,7 @@ function announceSecret(){
   toastTimer = setTimeout(()=> toast.classList.remove("show"), 5200);
 }
 
-/* ==========================================================================
-   MODAL HELPERS
-   ========================================================================== */
+// modal helpers
 function openModal(id){
   document.getElementById(id).classList.add("open");
 }
@@ -833,17 +814,13 @@ document.addEventListener("keydown", (e)=>{
   }
 });
 
-/* ==========================================================================
-   MUTE TOGGLE
-   ========================================================================== */
+// mute button
 document.getElementById("mute-toggle").addEventListener("click", (e)=>{
   const muted = AudioManager.toggleMuted();
   e.currentTarget.classList.toggle("is-muted", muted);
 });
 
-/* ==========================================================================
-   CONSTELLATION PROGRESS MAP
-   ========================================================================== */
+// progress bar
 const CONST_NODES = [
   { key:"home", x:100, y:20 },
   { key:"mercury", x:170, y:70 },
@@ -878,7 +855,7 @@ function initConstellationMap(){
 
 function visitedFlags(){
   return {
-    home:true, // homepage is reached by everyone who unlocks the site
+    home:true, 
     mercury: state.planetsVisited.mercury,
     neptune: state.planetsVisited.neptune,
     venus: state.planetsVisited.venus,
@@ -901,9 +878,7 @@ updateConstellation();
 
 document.getElementById("home-btn").addEventListener("click", ()=> showScreen("home"));
 
-/* ==========================================================================
-   LAZY-RENDER PLANET SCREENS ONCE (on first paint) so counts show correctly
-   ========================================================================== */
+// planet
 renderMercuryShelf();
 renderStarfield();
 
@@ -1029,7 +1004,6 @@ venusObserver.observe(document.getElementById("screen-venus"), { attributes:true
 
   let currentIndex = 0;
 
-  // 1. Populate the track list interface
   mySongs.forEach((song, index) => {
     const item = document.createElement("div");
     item.className = "sp-track-item";
@@ -1044,7 +1018,6 @@ venusObserver.observe(document.getElementById("screen-venus"), { attributes:true
     trackList.appendChild(item);
   });
 
-  // 2. Play a specific track
   function playTrack(index) {
     if(index < 0) index = mySongs.length - 1;
     if(index >= mySongs.length) index = 0;
@@ -1055,7 +1028,6 @@ venusObserver.observe(document.getElementById("screen-venus"), { attributes:true
     titleEl.textContent = song.title;
     artistEl.textContent = song.artist;
 
-    // Update UI highlighting
     document.querySelectorAll(".sp-track-item").forEach((el, i) => {
       el.classList.toggle("playing", i === currentIndex);
     });
@@ -1064,7 +1036,6 @@ venusObserver.observe(document.getElementById("screen-venus"), { attributes:true
     btnPlayPause.textContent = "⏸️";
   }
 
-  // 3. Play/Pause toggle
   btnPlayPause.addEventListener("click", () => {
     if(audio.paused) {
       if(!audio.src) playTrack(0);
@@ -1090,11 +1061,53 @@ function playTrack(key){
 
     if(prev){
       fade(prev, prev.volume || TARGET_VOLUME, 0, ()=>{
-        prev.pause(); // Tingnan mo, walang reset to zero dito!
+        prev.pause(); 
       });
     }
     if(next){
-      safePlay(next); // Wala ring reset to zero dito!
+      safePlay(next); 
       fade(next, 0, TARGET_VOLUME, null);
     }
   }
+
+/* ==========================================================================
+   STICKY NOTE DIARY FUNCTIONS
+   ========================================================================== */
+window.addDiaryNote = function(){
+  const textarea = document.getElementById("diary-textarea");
+  const text = textarea.value.trim();
+  if(!text) return; 
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  if(!state.diaryEntries) state.diaryEntries = [];
+  state.diaryEntries.push({ date: dateStr, text: text });
+  saveState();
+
+  textarea.value = "";
+  renderDiaryBoard();
+};
+
+window.renderDiaryBoard = function(){
+  const board = document.getElementById("diary-board");
+  if(!board) return;
+  board.innerHTML = "";
+
+  const entries = state.diaryEntries || [];
+  
+  [...entries].reverse().forEach((entry, i) => {
+    const note = document.createElement("div");
+    note.className = "sticky-note";
+    
+    const rot = (Math.random() * 4 - 2).toFixed(1);
+    note.style.transform = `rotate(${rot}deg)`;
+    
+    note.innerHTML = `
+      <p class="note-date">${entry.date}</p>
+      <p class="note-text">${entry.text}</p>
+      <p class="note-sig">- Baby</p>
+    `;
+    board.appendChild(note);
+  });
+};
