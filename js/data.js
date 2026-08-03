@@ -122,6 +122,14 @@ const REGULAR_LETTERS = buildRegularLetters();
 
 const SECRET_LETTERS = [
   {
+    id:"secret-diary",
+    unlockKey:"diary",
+    title:"Open when you want to tell me whatever you want to tell me",
+    isDiary: true,
+    text:""
+  },
+  
+  {
     id:"secret-1",
     unlockKey:"stars100",
     title:"Open when you discover all 100 stars",
