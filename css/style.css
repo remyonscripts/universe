@@ -1067,3 +1067,69 @@ body:has(#screen-supernova.active) #constellation-map{ display:none; }
 .venus-art-wrap {
   min-width: 0 !important;
 }
+
+/* sticky notes */
+.diary-card {
+  background: linear-gradient(160deg, #1f1b2e, #13101c) !important;
+  color: var(--starlight);
+  max-width: 700px !important;
+}
+.diary-input-area {
+  display: flex; flex-direction: column; gap: 0.8rem;
+  margin-bottom: 2rem; padding: 1.2rem;
+  background: rgba(253,248,240,0.03);
+  border-radius: 8px; border: 1px dashed rgba(185,166,232,0.4);
+}
+.diary-prompt {
+  font-family: var(--font-display); font-style: italic;
+  color: var(--blush); font-size: 1.2rem;
+}
+#diary-textarea {
+  width: 100%; font-family: var(--font-hand); font-size: 1.3rem;
+  background: transparent; border: none;
+  color: var(--starlight); resize: vertical; outline: none;
+  border-bottom: 1px solid rgba(185,166,232,0.2); margin-bottom: 0.5rem;
+}
+#diary-textarea::placeholder { color: rgba(185,166,232,0.4); }
+#diary-save-btn {
+  align-self: flex-end; background: var(--glow-pink); color: #2a0f22;
+  font-weight: bold; border: none; padding: 0.5em 1.2em;
+}
+#diary-save-btn:hover { transform: scale(1.05); }
+
+
+.diary-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+.sticky-note {
+  background: #fdfaf3; color: #3a2c3f;
+  padding: 1.2rem; box-shadow: var(--pixel-shadow);
+  font-family: var(--font-hand);
+  display: flex; flex-direction: column; gap: 0.5rem;
+  position: relative;
+  animation: popInNote 0.4s var(--ease-cinematic) backwards;
+}
+
+.sticky-note::before {
+  content: ""; position: absolute;
+  top: -12px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+  width: 50px; height: 22px;
+  background: rgba(255,255,255,0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  backdrop-filter: blur(2px);
+}
+.note-date {
+  font-family: var(--font-display); font-size: 0.85rem;
+  color: #7a5fbf; border-bottom: 1px solid rgba(122,95,191,0.2);
+  padding-bottom: 0.3rem; margin-bottom: 0.3rem;
+}
+.note-text { font-size: 1.3rem; line-height: 1.4; white-space: pre-wrap; flex-grow: 1; }
+.note-sig { text-align: right; font-size: 1.1rem; color: #8a7a95; font-style: italic; }
+
+@keyframes popInNote {
+  0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
